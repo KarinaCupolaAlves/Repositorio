@@ -91,8 +91,9 @@
 
                             <label for="genero">Selecione um gênero:
                                 <br>
-                                <select name="genero" id="fkGenero_lista">
+                                <select name="genero" id="fkGenero_lista" onchange="calcularPrecoVenda()">
                                     <option hidden selected> - Escolha uma opção - </option>
+                        
                                 </select>
                             </label>
 
@@ -106,13 +107,19 @@
                             <label>
                                 Preço de Compra (R$):
                                 <br>
-                                <input name="precoCompra" id="precoCompra" maxlength="20" type="Text"></input>
+                                <input name="precoCompra" id="precoCompra" maxlength="20" type="Text"onkeyup="calcularPrecoVenda()"></input>
                             </label>
 
                             <label>
                                 Preço de Venda (R$):
                                 <br>
                                 <input name="precoVenda" id="precoVenda" maxlength="20" type="Text"></input>
+                            </label>
+
+                            <label>
+                                Quantidade em estoque:
+                                <br>
+                                <input type="number" id="quantidadeEstoque" name="quantidadeEstoque">
                             </label>
 
 
@@ -124,8 +131,6 @@
             </div>
         </div>
     </div>
-
-
 
 
 </body>
@@ -146,7 +151,8 @@
             fkGenero: form_postagem.fkGenero_lista.value,
             fkAutor: form_postagem.fkAutor_lista.value,
             precoCompra: form_postagem.precoCompra.value,
-            precoVenda: form_postagem.precoVenda.value
+            precoVenda: form_postagem.precoVenda.value,
+            form_postagem: form_postagem.quantidadeEstoque.value
         }
 
         fetch(`/livros/cadastrar`, {
@@ -259,7 +265,22 @@
         });
     }
 
+    function calcularPrecoVenda() {
+        let compra = Number(precoCompra.value);
 
-    
+        let genero = fkGenero_lista.options[fkGenero_lista.selectedIndex].text.toLowerCase();
+
+        let venda = compra;
+
+        if (compra >= 100 && (genero == "horror" || genero == "romance")) {
+            venda = compra * 1.225;
+        } else if (compra <= 50 && (genero == "poesia" || genero == "horror")) {
+            venda = compra * 1.25;
+        } else if (compra > 50 && compra < 100 && genero == "fantasia") {
+            venda = compra * 1.275;
+        }
+        precoVenda.value = venda.toFixed(2);
+    }
+
 
 </script>
